@@ -1,0 +1,15 @@
+{
+	"name": "adfjulybatchevening",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "6d8600f5-4947-44d3-9f78-7d7d0a26ebbc",
+		"tenantId": "4334d5af-d448-4b12-b317-a3f7ff98efa1"
+	}
+}
