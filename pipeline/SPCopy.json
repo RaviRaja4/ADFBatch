@@ -13,15 +13,11 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [
-					{
-						"name": "RUNDATE"
-					}
-				],
+				"userProperties": [],
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[dbo].[usp_daily_data_evening_jul]",
+						"sqlReaderStoredProcedureName": "[dbo].[usp_daily_data_evening_july]",
 						"storedProcedureParameters": {
 							"SalesDate": {
 								"type": "DateTime",
@@ -31,8 +27,7 @@
 								}
 							}
 						},
-						"queryTimeout": "00:05:00",
-						"isolationLevel": "ReadUncommitted",
+						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
 					"sink": {
