@@ -21,7 +21,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[dbo].[usp_daily_data_evening_july]",
+						"sqlReaderStoredProcedureName": "[dbo].[usp_daily_data_evening_jul]",
 						"storedProcedureParameters": {
 							"SalesDate": {
 								"type": "DateTime",
@@ -31,7 +31,8 @@
 								}
 							}
 						},
-						"queryTimeout": "02:00:00",
+						"queryTimeout": "00:05:00",
+						"isolationLevel": "ReadUncommitted",
 						"partitionOption": "None"
 					},
 					"sink": {

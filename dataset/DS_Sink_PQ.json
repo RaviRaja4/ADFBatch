@@ -19,7 +19,7 @@
 					"value": "@concat('sales_order_',dataset().run_date,'.parquet')",
 					"type": "Expression"
 				},
-				"fileSystem": "Storeprocedure"
+				"fileSystem": "storeprocedure"
 			},
 			"compressionCodec": "snappy"
 		},
