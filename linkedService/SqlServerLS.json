@@ -1,0 +1,21 @@
+{
+	"name": "SqlServerLS",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "RAVIRAJA",
+			"database": "AdventureWorksLT2025",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "ravi_evening",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI3MDVkNDIxMS01Nzc3LTQ3ZTAtODExMC1mZDk0MmJhOGQ4NzQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "SHIR",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
