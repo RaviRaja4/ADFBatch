@@ -911,6 +911,14 @@
 					],
 					"transformations": [
 						{
+							"name": "flowlet1",
+							"flowlet": {
+								"referenceName": "AddDateTime",
+								"type": "DataFlowReference",
+								"parameters": {}
+							}
+						},
+						{
 							"name": "derivedColumn1"
 						},
 						{
@@ -942,6 +950,7 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> source1",
+						"sort1 compose(composition: 'AddDateTime') ~> flowlet1@(output1)",
 						"source1 derive(FullName = concat(\r",
 						"iif(isNull(Title),\"\",Title),\r",
 						"iif(isNull(FirstName),\"\",FirstName),\r",
@@ -963,7 +972,7 @@
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select1",
 						"select1 sort(asc(CustomerID, true)) ~> sort1",
-						"sort1 sink(allowSchemaDrift: true,",
+						"flowlet1@output1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     partitionFileNames:['customer.csv'],",
 						"     umask: 0022,",
