@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "Cutomer_transform",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
