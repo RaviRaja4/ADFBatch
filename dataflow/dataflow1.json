@@ -30,17 +30,17 @@
 			],
 			"transformations": [
 				{
-					"name": "join1"
-				},
-				{
-					"name": "select1"
-				},
-				{
 					"name": "flowlet1",
 					"flowlet": {
 						"referenceName": "AddDateTime",
 						"type": "DataFlowReference"
 					}
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -79,6 +79,7 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true) ~> Customertab",
+				"select1 compose(composition: 'AddDateTime') ~> flowlet1@(output1)",
 				"Addresstab, Customertab join(Addresstab@CustomerID == Customertab@CustomerID,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
@@ -95,12 +96,11 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 compose(composition: 'AddDateTime') ~> flowlet1@(output1)",
 				"flowlet1@output1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'rawfiles',",
-				"     folderPath: 'joinresult',",
+				"     folderPath: 'joinresult.csv',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
