@@ -11,6 +11,9 @@
 		"AzureSqlDatabaseLS_password": {
 			"value": ""
 		},
+		"SqlServerLS_password": {
+			"value": ""
+		},
 		"AzureDataLakeStorageLS_properties_typeProperties_url": {
 			"value": "https://adejulybatchevening.dfs.core.windows.net/"
 		},
@@ -31,6 +34,15 @@
 		},
 		"RestLS_properties_typeProperties_url": {
 			"value": "https://jsonplaceholder.typicode.com/"
+		},
+		"SqlServerLS_properties_typeProperties_server": {
+			"value": "RAVIRAJA"
+		},
+		"SqlServerLS_properties_typeProperties_database": {
+			"value": "AdventureWorksLT2025"
+		},
+		"SqlServerLS_properties_typeProperties_userName": {
+			"value": "ravi_evening"
 		},
 		"containerUri": {
 			"value": ""

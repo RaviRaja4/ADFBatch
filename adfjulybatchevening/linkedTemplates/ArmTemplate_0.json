@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'AzureSqlDatabaseLS'"
 		},
+		"SqlServerLS_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'SqlServerLS'"
+		},
 		"AzureDataLakeStorageLS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://adejulybatchevening.dfs.core.windows.net/"
@@ -42,6 +46,18 @@
 		"AzureDataLakeStorageLSWithKey_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://adejulybatchevening.dfs.core.windows.net/"
+		},
+		"SqlServerLS_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "RAVIRAJA"
+		},
+		"SqlServerLS_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "AdventureWorksLT2025"
+		},
+		"SqlServerLS_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "ravi_evening"
 		}
 	},
 	"variables": {
@@ -139,6 +155,16 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SHIR')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -198,7 +224,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "customer.csv",
+						"fileName": "customershir.csv",
 						"fileSystem": "adventureworks"
 					},
 					"columnDelimiter": ",",
@@ -635,6 +661,34 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SqlServerLS')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('SqlServerLS_properties_typeProperties_server')]",
+					"database": "[parameters('SqlServerLS_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('SqlServerLS_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('SqlServerLS_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "SHIR",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/SHIR')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CopyBtoB')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -710,331 +764,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_Source_Sales')]",
 				"[concat(variables('factoryId'), '/datasets/DS_Sink_Sales')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CopyMultipleTableSQL')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "LookupSQLDB",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT TABLE_SCHEMA,TABLE_NAME\nFROM INFORMATION_SCHEMA.TABLES\nWHERE TABLE_SCHEMA='SalesLT' \nAND TABLE_TYPE='BASE TABLE'",
-								"queryTimeout": "00:05:00",
-								"isolationLevel": "ReadUncommitted",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSqlTable1",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "LookupSQLDB",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('LookupSQLDB').output.value",
-								"type": "Expression"
-							},
-							"isSequential": false,
-							"batchCount": 4,
-							"activities": [
-								{
-									"name": "Copy data1",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"sqlReaderQuery": {
-												"value": "@concat('SELECT * FROM ',item().TABLE_SCHEMA,'.',item().TABLE_NAME)",
-												"type": "Expression"
-											},
-											"queryTimeout": "00:07:00",
-											"isolationLevel": "ReadUncommitted",
-											"partitionOption": "None"
-										},
-										"sink": {
-											"type": "DelimitedTextSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextWriteSettings",
-												"quoteAllText": true,
-												"fileExtension": ".txt"
-											}
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "AzureSqlTable1",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "DS_Sink_Dynamic_CSV",
-											"type": "DatasetReference",
-											"parameters": {
-												"file_name": {
-													"value": "@item().TABLE_NAME",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2026-07-14T05:20:31Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Sink_Dynamic_CSV')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CopyNonRelationData')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET",
-								"paginationRules": {
-									"supportRFC5988": "true"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"path": "$['id']"
-										},
-										"sink": {
-											"name": "id"
-										}
-									},
-									{
-										"source": {
-											"path": "$['name']"
-										},
-										"sink": {
-											"name": "name"
-										}
-									},
-									{
-										"source": {
-											"path": "$['username']"
-										},
-										"sink": {
-											"name": "username"
-										}
-									},
-									{
-										"source": {
-											"path": "$['email']"
-										},
-										"sink": {
-											"name": "email"
-										}
-									},
-									{
-										"source": {
-											"path": "$['address']['street']"
-										},
-										"sink": {
-											"name": "street"
-										}
-									},
-									{
-										"source": {
-											"path": "$['address']['suite']"
-										},
-										"sink": {
-											"name": "suite"
-										}
-									},
-									{
-										"source": {
-											"path": "$['address']['city']"
-										},
-										"sink": {
-											"name": "city"
-										}
-									},
-									{
-										"source": {
-											"path": "$['address']['zipcode']"
-										},
-										"sink": {
-											"name": "zipcode"
-										}
-									},
-									{
-										"source": {
-											"path": "$['address']['geo']['lat']"
-										},
-										"sink": {
-											"name": "lat"
-										}
-									},
-									{
-										"source": {
-											"path": "$['address']['geo']['lng']"
-										},
-										"sink": {
-											"name": "lng"
-										}
-									},
-									{
-										"source": {
-											"path": "$['phone']"
-										},
-										"sink": {
-											"name": "phone"
-										}
-									},
-									{
-										"source": {
-											"path": "$['website']"
-										},
-										"sink": {
-											"name": "website"
-										}
-									},
-									{
-										"source": {
-											"path": "$['company']['name']"
-										},
-										"sink": {
-											"name": "company_name"
-										}
-									},
-									{
-										"source": {
-											"path": "$['company']['catchPhrase']"
-										},
-										"sink": {
-											"name": "catchPhrase"
-										}
-									},
-									{
-										"source": {
-											"path": "$['company']['bs']"
-										},
-										"sink": {
-											"name": "bs"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "RestResource1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_Sink_CSV",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/RestResource1')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Sink_CSV')]"
 			]
 		}
 	]

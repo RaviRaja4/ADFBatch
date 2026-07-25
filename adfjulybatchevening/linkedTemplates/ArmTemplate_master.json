@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'AzureSqlDatabaseLS'"
 		},
+		"SqlServerLS_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'SqlServerLS'"
+		},
 		"AzureDataLakeStorageLS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://adejulybatchevening.dfs.core.windows.net/"
@@ -42,6 +46,18 @@
 		"RestLS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://jsonplaceholder.typicode.com/"
+		},
+		"SqlServerLS_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "RAVIRAJA"
+		},
+		"SqlServerLS_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "AdventureWorksLT2025"
+		},
+		"SqlServerLS_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "ravi_evening"
 		},
 		"containerUri": {
 			"type": "string",
@@ -76,6 +92,9 @@
 					"AzureSqlDatabaseLS_password": {
 						"value": "[parameters('AzureSqlDatabaseLS_password')]"
 					},
+					"SqlServerLS_password": {
+						"value": "[parameters('SqlServerLS_password')]"
+					},
 					"AzureDataLakeStorageLS_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorageLS_properties_typeProperties_url')]"
 					},
@@ -96,6 +115,15 @@
 					},
 					"AzureDataLakeStorageLSWithKey_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorageLSWithKey_properties_typeProperties_url')]"
+					},
+					"SqlServerLS_properties_typeProperties_server": {
+						"value": "[parameters('SqlServerLS_properties_typeProperties_server')]"
+					},
+					"SqlServerLS_properties_typeProperties_database": {
+						"value": "[parameters('SqlServerLS_properties_typeProperties_database')]"
+					},
+					"SqlServerLS_properties_typeProperties_userName": {
+						"value": "[parameters('SqlServerLS_properties_typeProperties_userName')]"
 					}
 				}
 			},
